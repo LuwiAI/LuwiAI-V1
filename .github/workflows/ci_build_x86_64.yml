@@ -1,0 +1,72 @@
+# ci_build_x86_64.yml
+name: X86-64 CI Build and Test (Native)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  x86_64_build_test:
+    name: Build & Test on X86-64 Architecture
+    
+    # Executa nativamente no runner padrão x86-64 do GitHub
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v4
+        
+      # Instala as toolchains C/C++, Rust e NASM
+      - name: 📦 Install Dependencies and Toolchains
+        run: |
+          # Instala dependências de build essenciais (CMake, GCC/Clang, NASM)
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake nasm
+
+          # Instala o toolchain Rust
+          rustup toolchain install stable
+          
+      # --- Build C/C++/Assembly para x86-64 ---
+      - name: ⚙️ Configure CMake
+        run: |
+          mkdir build_x86_64
+          cd build_x86_64
+          # Configuração padrão de release. O CMAKE detectará automaticamente o compilador x86_64
+          # Flags como -march=native (ou -mavx512) podem ser setadas no CMakeLists.txt principal
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+        
+      - name: 🔨 Build C/C++ and Assembly Runtime
+        run: |
+          cd build_x86_64
+          # Compilação paralela usando todos os cores disponíveis
+          cmake --build . -j$(nproc)
+
+      # --- Build Rust (CLI e Core) ---
+      - name: 🦀 Build Rust Components (CLI and Core)
+        run: |
+          # Compilação nativa para o host x86-64
+          cargo build --release --manifest-path code/src/rust/cli/Cargo.toml
+          
+      # --- Execução de Testes ---
+      - name: 🧪 Run Tests (C/C++)
+        # Executa os testes unitários e funcionais do motor C/C++
+        run: |
+          echo "Running C/C++ Unit Tests..."
+          ./build_x86_64/tests/unit/test_c_runtime
+          
+      - name: 🧪 Run Tests (Rust)
+        # Executa os testes do core Rust e o teste funcional de inferência CLI
+        run: |
+          echo "Running Rust Unit and Functional Tests..."
+          cargo test --manifest-path code/src/rust/luwi_core/Cargo.toml
+          
+          # Teste funcional de inferência (CLI)
+          ./target/release/luwi_cli --model model/tiny.bin --prompt "Test native x86_64 performance"
+          
+          echo "X86-64 CI completed successfully."
