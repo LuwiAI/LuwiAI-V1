@@ -1,0 +1,81 @@
+# ci_build_arm64.yml
+name: ARM64 CI Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  arm64_build_test:
+    name: Build & Test on ARM64 Architecture
+    
+    # Usamos o Ubuntu padrão, mas configuramos o QEMU para emulação ARM64
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v4
+        
+      # Configura o QEMU para que binários ARM64 possam ser executados no runner x86-64
+      - name: 🛠️ Set up QEMU for ARM64 Emulation
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: 'arm64'
+
+      # Instala as toolchains (C/C++ e Rust)
+      - name: 📦 Install Dependencies and Toolchains
+        run: |
+          # Instala dependências de build (CMake, NASM)
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake nasm
+
+          # Instala o toolchain Rust (importante para cross-compilation)
+          rustup toolchain install stable
+          rustup target add aarch64-unknown-linux-gnu
+          
+          # Configura o linker (pode ser necessário um linker específico para aarch64)
+          # Depende da distribuição, mas o rustup/cmake geralmente gerencia isso se a toolchain for instalada corretamente.
+
+      # --- Build C/C++/Assembly para ARM64 ---
+      - name: ⚙️ Configure CMake for ARM64
+        # Define o CMAKE_TOOLCHAIN_FILE se necessário, mas para QEMU simples, 
+        # o CMake pode detectar o compilador de host se estiver dentro do ambiente emulado.
+        run: |
+          mkdir build_arm64
+          cd build_arm64
+          # Força o CMake a usar a toolchain aarch64 se necessário, ou confia no ambiente QEMU
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_SYSTEM_NAME=Linux
+        
+      - name: 🔨 Build C/C++ and Assembly Runtime (ARM64)
+        run: |
+          cd build_arm64
+          cmake --build . -j$(nproc)
+
+      # --- Build Rust para ARM64 ---
+      - name: 🦀 Build Rust Components (CLI and Core) for ARM64
+        run: |
+          # O cargo compila para o target ARM64 (aarch64-unknown-linux-gnu)
+          cargo build --release --target aarch64-unknown-linux-gnu --manifest-path code/src/rust/cli/Cargo.toml
+          
+      # --- Execução de Testes para ARM64 ---
+      - name: 🧪 Run Tests (ARM64 Emulated)
+        # Os binários C/C++ e Rust compilados para ARM64 são executados sob QEMU
+        run: |
+          echo "Running C/C++ Unit Tests..."
+          # Exemplo de como rodar o binário de teste C/C++
+          qemu-aarch64 ./build_arm64/tests/unit/test_c_runtime_arm64
+          
+          echo "Running Rust Unit Tests..."
+          # Exemplo de como rodar os testes Rust (o binário precisa ser executado via QEMU)
+          qemu-aarch64 ./target/aarch64-unknown-linux-gnu/release/test_inference
+          
+          # Teste de inferência funcional (CLI)
+          qemu-aarch64 ./target/aarch64-unknown-linux-gnu/release/luwi_cli --model model/tiny.bin --prompt "Test QEMU"
+          
+          echo "ARM64 CI completed successfully."
