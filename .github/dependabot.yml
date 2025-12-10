@@ -1,0 +1,47 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # 1. Dependências do Rust (Cargo)
+  - package-ecosystem: "cargo"
+    directory: "/code/src/rust/" # Monitora todas as subpastas Rust (bindings, cli, luwi_core)
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "rust"
+    # Agrupa atualizações menores para evitar muitos PRs
+    groups:
+      rust-minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # 2. Dependências do Python (Ferramentas de Treinamento/Coleta)
+  - package-ecosystem: "pip"
+    # Monitora as pastas que contêm arquivos requirements.txt
+    directories:
+      - "/tools/dataset_prep"
+      - "/tools/data_collector"
+      - "/tools/quantizer"
+      - "/tools/trainer"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "python"
+    # Agrupa atualizações para evitar muitos PRs de ferramentas
+    groups:
+      python-tools-updates:
+        patterns:
+          - "*"
+
+  # 3. Dependências do GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/" # Monitora a pasta .github/workflows
+    schedule:
+      interval: "monthly" # Menos frequente, pois Actions são mais estáveis
+    labels:
+      - "dependencies"
+      - "ci"
