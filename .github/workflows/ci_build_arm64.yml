@@ -20,7 +20,7 @@ jobs:
     
     steps:
       - name: 🔄 Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       # Configura o QEMU para que binários ARM64 possam ser executados no runner x86-64
       - name: 🛠️ Set up QEMU for ARM64 Emulation
