@@ -1,0 +1,18 @@
+{
+  "seed": 314159,
+  "steps": 2500,
+  "batch_size": 8,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.1,
+  "grad_clip": 1.0,
+  "log_every": 50,
+  "eval_batches": 8,
+  "model": {
+    "vocab_size": 256,
+    "d_model": 96,
+    "n_heads": 4,
+    "n_layers": 3,
+    "max_seq_len": 192,
+    "dropout": 0.05
+  }
+}
