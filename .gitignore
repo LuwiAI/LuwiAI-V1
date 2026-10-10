@@ -1,87 +1,43 @@
-# ------------------------------------
-# General Build/Environment Ignorance
-# ------------------------------------
+# Python build and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+# Generated datasets and trained checkpoints
+/data/generated/
+/runs/
+*.pt
+*.pth
+*.safetensors
+# Editor, OS, and logs
 *~
 *.swp
 *.bak
 .DS_Store
 .vscode/
-
-# ------------------------------------
-# CMake / C / C++ Ignorance
-# ------------------------------------
-# Build directories created by CMake (e.g., build_x86_64, build_arm64)
-/build*
+*.log
+# Native build artifacts
+/build*/
 /bin/
 /lib/
-/tmp/
-
-# Executables and object files
 *.o
 *.a
 *.so
 *.dll
 *.exe
-
-# CMake intermediate files
 CMakeCache.txt
 CMakeFiles/
-Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
-
-# Dependencies downloaded by external C++ package managers (if used)
-# /vcpkg/
-# /conan/
-
-# ------------------------------------
-# Rust (Cargo) Ignorance
-# ------------------------------------
-# Target directory where binaries and artifacts are built
+# Rust build artifacts
 /target/
-
-# Generated documentation
-/doc/
-
-# Rust language server (RLS) and IDE files
 .rustup/
-.vscode/settings.json
-.vscode/tasks.json
-
-# ------------------------------------
-# Python (Tools/Scraping/Training) Ignorance
-# ------------------------------------
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Byte-code files
-*.pyc
-__pycache__/
-
-# Distribution/packaging artifacts
-.Python
-build/
-dist/
-*.egg-info
-
-# Logs and Data output from scripts
-*.log
-
-# ------------------------------------
-# Project-Specific Ignorance
-# ------------------------------------
-
-# Models, Weights, and Large Datasets
-# Do NOT commit large model weights or raw data files.
-/model/*.bin
-/model/*.pth
-/model/*.safetensors
-/data/raw_corpus.txt  # Large scraped data output
-/data/*.hdf5
-/data/*.parquet
-
-# Configuration files generated after first run
+# Project-generated documentation
+/doc/
 luwi_config.toml

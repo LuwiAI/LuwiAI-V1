@@ -1,0 +1,72 @@
+{
+  "evaluation": "luwiai_generated_validation_exact_match",
+  "is_external_benchmark": false,
+  "checkpoint": "runs/local_cpu_v2/checkpoint.pt",
+  "examples": 100,
+  "exact_matches": 7,
+  "exact_match_rate": 0.07,
+  "seed": 42,
+  "samples": [
+    {
+      "prompt": "List the integers from 1 through 8 in ascending order, separated by commas.",
+      "expected": "1, 2, 3, 4, 5, 6, 7, 8",
+      "predicted": "1, 2, 3, 4, 5, 6, 7, 8, 9",
+      "exact_match": false
+    },
+    {
+      "prompt": "Sort these integers from smallest to largest: -11, -35, -28, -88.",
+      "expected": "-88, -35, -28, -11",
+      "predicted": "-5, -7, -7, -5",
+      "exact_match": false
+    },
+    {
+      "prompt": "Count the characters in this string: cacaaa",
+      "expected": "6",
+      "predicted": "6",
+      "exact_match": true
+    },
+    {
+      "prompt": "Sort these integers from smallest to largest: 82, -99, -39, 28.",
+      "expected": "-99, -39, 28, 82",
+      "predicted": "-99, -57, 67, 97",
+      "exact_match": false
+    },
+    {
+      "prompt": "Which integer is larger, 99 or -13?",
+      "expected": "99",
+      "predicted": "77",
+      "exact_match": false
+    },
+    {
+      "prompt": "Sort these integers from smallest to largest: 43, -1, 52, 86.",
+      "expected": "-1, 43, 52, 86",
+      "predicted": "-77, 7, 67, 97, 97",
+      "exact_match": false
+    },
+    {
+      "prompt": "Compute 6 * -24.",
+      "expected": "-144",
+      "predicted": "-18",
+      "exact_match": false
+    },
+    {
+      "prompt": "Compute 186 + 72.",
+      "expected": "258",
+      "predicted": "10",
+      "exact_match": false
+    },
+    {
+      "prompt": "Which integer is larger, -31 or -93?",
+      "expected": "-31",
+      "predicted": "-17",
+      "exact_match": false
+    },
+    {
+      "prompt": "Compute -293 + 366.",
+      "expected": "73",
+      "predicted": "-111",
+      "exact_match": false
+    }
+  ],
+  "warning": "Synthetic narrow-task diagnostic only; not evidence of general LLM or benchmark competence."
+}
